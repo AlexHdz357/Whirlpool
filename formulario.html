@@ -1,51 +1,124 @@
-<!DOCTYPE HTML>
-<html>
-    <link rel="stylesheet" href="style.css">
-<head> 
-    <title>Formulario</title>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario con Mapa</title>
+  <link rel="stylesheet" href="style.css">
+  
 </head>
-<body>  
-    <ul>
-        <li><a href="index.html">Inicio</a></li>
-        <li><a href="#formulario">Formulario</a></li>
-        <li style="float:right"><a class="active" href="#info">Información</a></li>
-      </ul>
-    <h1>Formulario</h1>
-    <form action="/formulario" method="POST">
-        Nombre:
-        <br>
-        <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre" required>
-        <br>
-        Apellido:
-        <br>
-        <input type="text" id="apellido" name="apellido" placeholder="Ingrese su apellido" required>
-        <br>
-        Mensaje:
-        <br>
-        <textarea cols="100" rows="10" id="comentario" name="comentario" placeholder="Ingrese su mensaje" required></textarea>
-        <br>
-        Fecha:
-        <br>
-        <input type="date" id="fecha" name="fecha" required>
-        <br>
-        Correo electrónico:
-        <br>
-        <input type="email" id="correo" name="correo" placeholder="Ingrese su correo electrónico" required>
-        <br>
-        Contraseña:
-        <br>
-        <input type="password" id="contraseña" name="contraseña" placeholder="Ingrese su contraseña" required>
-        <br>
-        Hora:
-        <br>
-        <input type="time" id="hora" name="hora" required>
-        <br>
-        <br>
-        <button type="reset">Limpiar campos</button>
-        <button type="submit">Enviar información</button>
-      </form>
-      
-    </form>
-</body>
+<body>
+  <ul>
+    <li><a href="#formulario">Formulario</a></li>
+    <li style="float:right"><a class="active" href="#info">Información</a></li>
+  </ul>
 
+  <h3>My Location Map</h3>
+    <div id="map"></div>
+    <button id="confirm-button">Confirmar Ubicación</button>
+    <script>
+      let marker, latitude, longitude, confirmedLocation = false;
+  
+      function initMap() {
+        // Check if geolocation is available
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              let currentLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              };
+  
+              // Create the map centered on your current location
+              let map = new google.maps.Map(
+                document.getElementById('map'), {
+                  zoom: 15, // Adjust zoom level as needed
+                  center: currentLocation
+                }
+              );
+  
+              // Add a marker at your location (initially placed)
+              marker = new google.maps.Marker({
+                position: currentLocation,
+                map: map,
+                draggable: true // Enables dragging the marker
+              });
+
+              // Update map center on marker drag
+              marker.addListener('dragend', function() {
+                let newLocation = marker.getPosition();
+                map.setCenter(newLocation);
+                latitude = newLocation.lat();
+                longitude = newLocation.lng();
+                console.log('New location:', `Latitude: ${latitude}, Longitude: ${longitude}`);
+              });
+  
+              // Listen for click events on the confirmation button
+              document.getElementById('confirm-button').addEventListener('click', () => {
+                latitude = marker.getPosition().lat();
+                longitude = marker.getPosition().lng();
+                console.log('New location:', `Latitude: ${latitude}, Longitude: ${longitude}`);
+                confirmedLocation = true;
+  
+                // Actualizar el valor del campo oculto en `formulario.html`
+                document.getElementById('ubicacion-confirmada').value = 'si';
+  
+                // Habilitar el botón de envío en `formulario.html`
+                document.getElementById('enviar-formulario').disabled = false;
+              });
+  
+              // Listen for click events on the map (optional, can be removed)
+              map.addListener('click', (event) => {
+                marker.setPosition(event.latLng); // Update marker position on click
+
+                // Center the map on the new marker position
+                map.setCenter(event.latLng);
+
+                // Update latitude and longitude variables
+                latitude = event.latLng.lat();
+                longitude = event.latLng.lng();
+                console.log('New location:', `Latitude: ${latitude}, Longitude: ${longitude}`);
+              });
+              
+            },
+            (error) => {
+              console.error('Error getting your location:', error.message);
+            }
+          );
+        } else {
+          console.error("Geolocation is not supported by this browser.");
+        }
+      }
+    </script>
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmiaxdBO8le1EB7Tncm9yvqPmw5BrawYM&callback=initMap">
+    </script>
+  <h1>Formulario</h1>
+  <form action="/formulario" method="POST" onsubmit="return validarFormulario()">
+    <p>**Información del Producto:**</p>
+    <label for="nombreProducto">Nombre:</label>
+    <br>
+    <input type="text" id="nombreProducto" name="nombreProducto" placeholder="Ingrese el nombre del producto" required>
+    <br>
+    <br>
+    <label for="foto">Foto:</label>
+    <br>
+    <input type="file" id="foto" name="foto" placeholder="Ingresa la foto del problema encontrado" required accept=".img,.jpg,.png">
+    <br>
+    <br>
+    <label for="prioridad">Prioridad:</label>
+    <br>
+    <input type="text" id="prioridad" name="prioridad" placeholder=" 1, 2, 3 o 4" required maxlength="1" oninput="this.value=this.value.replace(/[^0-4]/g,'');" />
+    <br>
+    <br>
+    <label for="descripcion">Descripción del problema:</label>
+    <br>
+    <textarea cols="100" rows="10" id="descripcion" name="descripcion" placeholder="Describe el problema encontrado a reportar:" required></textarea>
+    <br>
+    <br>
+    <button type="reset">Limpiar campos</button>
+    <button type="submit" id="enviar-formulario" >Enviar información </button>
+  </form>
+ 
+</body>
 </html>
