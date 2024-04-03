@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+    <link rel="stylesheet" href="style.css">
+<head> 
+    <title>Formulario</title>
+</head>
+<body>  
+    <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="#formulario">Formulario</a></li>
+        <li style="float:right"><a class="active" href="#info">Información</a></li>
+      </ul>
+    <h1>Formulario</h1>
+    <form action="/formulario" method="POST">
+        Nombre:
+        <br>
+        <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre" required>
+        <br>
+        Apellido:
+        <br>
+        <input type="text" id="apellido" name="apellido" placeholder="Ingrese su apellido" required>
+        <br>
+        Mensaje:
+        <br>
+        <textarea cols="100" rows="10" id="comentario" name="comentario" placeholder="Ingrese su mensaje" required></textarea>
+        <br>
+        Fecha:
+        <br>
+        <input type="date" id="fecha" name="fecha" required>
+        <br>
+        Correo electrónico:
+        <br>
+        <input type="email" id="correo" name="correo" placeholder="Ingrese su correo electrónico" required>
+        <br>
+        Contraseña:
+        <br>
+        <input type="password" id="contraseña" name="contraseña" placeholder="Ingrese su contraseña" required>
+        <br>
+        Hora:
+        <br>
+        <input type="time" id="hora" name="hora" required>
+        <br>
+        <br>
+        <button type="reset">Limpiar campos</button>
+        <button type="submit">Enviar información</button>
+      </form>
+      
+    </form>
+</body>
+
+</html>
