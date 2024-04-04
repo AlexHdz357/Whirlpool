@@ -57,5 +57,12 @@ button{
     height: 400px;
 }
 
+.imgLavadora img{
+    align-items: center;
+    display: flex;
+    margin: 0;
+    width: 50%;
+    height: 600px;
+}
 
 @media screen {}
