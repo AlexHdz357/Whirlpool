@@ -57,12 +57,32 @@ button{
     height: 400px;
 }
 
-.imgLavadora img{
-    align-items: center;
+.contenedor{
     display: flex;
-    margin: 0;
-    width: 50%;
-    height: 600px;
+    justify-content: space-between;
+    align-items: center;
 }
+
+.formularioB{
+    width: 50%;
+}
+.formularioB button{
+    background-color:  #0d436b;
+    margin: 20px;
+    padding: 25px 35px; 
+
+    
+}
+
+.formularioB button a{
+    color: #f5f6f7;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.lavadoraG{
+    display: flex;
+}
+
 
 @media screen {}
