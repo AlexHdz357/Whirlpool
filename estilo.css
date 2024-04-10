@@ -48,9 +48,9 @@ h2{
     padding: 45px 30px; 
 }
 
-button{
+/* button{
     margin: 0px 50px;
-}
+} */
 
 #map {
     width: 100%;
@@ -64,9 +64,11 @@ button{
 }
 
 .formularioB{
-    width: 50%;
+    width: 25%;
+    float: left;
 }
 .formularioB button{
+    display: flex;
     background-color:  #0d436b;
     margin: 20px;
     padding: 25px 35px; 
@@ -83,6 +85,8 @@ button{
 
 .lavadoraG{
     display: flex;
+    width: 300px;
+    float: right;
 }
 
 
