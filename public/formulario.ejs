@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario con Mapa</title>
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <ul>
+    <li><a href="#formulario">Formulario</a></li>
+    <li style="float:right"><a class="active" href="#info">Información</a></li>
+  </ul>
+  <h3>My Location Map</h3>
+  <div id="map"></div>
+  <button id="confirm-button">Confirmar Ubicación</button>
+  <script>
+    
+    let marker, latitude, longitude;
+    function initMap() {
+      // Check if geolocation is available
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            let currentLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            // Create the map centered on your current location
+            map = new google.maps.Map(
+              document.getElementById('map'), {
+                zoom: 15, // Adjust zoom level as needed
+                center: currentLocation
+              }
+            );
+
+            // Add a marker at your location (initially placed)
+            marker = new google.maps.Marker({
+              position: currentLocation,
+              map: map,
+              draggable: true // Enables dragging the marker
+            });
+
+            // Update map center on marker drag (optional)
+            marker.addListener('dragend', function() {
+              let newLocation = marker.getPosition();
+              map.setCenter(newLocation);
+              latitude = newLocation.lat();
+              longitude = newLocation.lng();
+            });
+
+            // Listen for click events on the confirmation button
+            document.getElementById('confirm-button').addEventListener('click', () => {
+              latitude = marker.getPosition().lat();
+              longitude = marker.getPosition().lng();
+              console.log('Confirmada ubicación:', `Latitude: ${latitude}, Longitude: ${longitude}`);
+
+              // Enable submit button
+              document.getElementById('enviar-formulario').disabled = false;
+            });
+
+            // Listen for click events on the map (optional, can be removed)
+            map.addListener('click', (event) => {
+              marker.setPosition(event.latLng); // Update marker position on click
+              map.setCenter(event.latLng);
+            });
+          },
+          (error) => {
+            console.error('Error getting your location:', error.message);
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
+    }
+
+  </script>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmiaxdBO8le1EB7Tncm9yvqPmw5BrawYM&callback=initMap">
+  </script>
+  <h1>Formulario</h1>
+  <form id ="formulario" action="/datos" method="POST">
+    <p>**Información del Producto:**</p>
+    <label for="nombreProducto">Nombre:</label>
+    <br>
+    <input type="text" id="nombreProducto" name="nombreProducto" placeholder="Ingrese el nombre del producto" required>
+    <br>
+    <br>
+    <label for="prioridad">Prioridad:</label>
+    <br>
+    <input type="text" id="prioridad" name="prioridad" placeholder=" 1, 2, 3 o 4" required maxlength="1" oninput="this.value=this.value.replace(/[^0-4]/g,'');" />
+    <br>
+    <br>
+    <label for="descripcion">Descripción del problema:</label>
+    <br>
+    <textarea cols="100" rows="10" id="descripcion" name="descripcion" placeholder="Describe el problema encontrado a reportar:" required></textarea>
+    <br>
+    <br>
+    <button type="reset">Limpiar campos</button>
+    <button type="submit" id="enviar-formulario" disabled>Enviar información</button>
+  </form>
+
+  
+</body>
+</html>
