@@ -51,7 +51,10 @@ h2{
 } */
 
 #map {
-    width: 100%;
+    margin: 0 auto; 
+    display: block;
+    border-radius: 10%;
+    width: 90%;
     height: 400px;
 }
 
