@@ -50,6 +50,13 @@ h2{
     margin: 0px 50px;
 } */
 
+#Inicio{
+    text-align: center;
+    padding: 20px 0px;
+    margin: 100px 300px;
+    background-color: #202b75d4;
+}
+
 #map {
     margin: 0 auto; 
     display: block;
