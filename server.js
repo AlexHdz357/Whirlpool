@@ -1,5 +1,5 @@
 const express = require('express');
-const mysql = require('mysql2');
+const mysql = require('mysql');
 const path = require('path');
 
 const app = express();
@@ -70,7 +70,7 @@ app.post('/datos', (req, res) => {
 
 
 // Iniciar el servidor
-const PORT = 3000;
+const PORT = 3306;
 app.listen(PORT, () => {
   console.log('Servidor backend escuchando en el puerto ${PORT}');
 });
