@@ -78,7 +78,9 @@
               latitude = marker.getPosition().lat();
               longitude = marker.getPosition().lng();
               console.log('Confirmada ubicación:', `Latitude: ${latitude}, Longitude: ${longitude}`);
-
+              // Set the values of the hidden inputs
+              document.getElementById('latitude').value = latitude;
+              document.getElementById('longitude').value = longitude;
               // Enable submit button
               document.getElementById('enviar-formulario').disabled = false;
             });
@@ -117,8 +119,10 @@
     <br>
     <label for="descripcion">Descripción del problema:</label>
     <br>
-    <textarea cols="100" rows="10" id="descripcion" name="descripcion" placeholder="Describe el problema encontrado a reportar:" required></textarea>
+    <textarea cols="100" rows="10" id="Descripcion" name="Descripcion" placeholder="Describe el problema encontrado a reportar:" required></textarea>
     <br>
+    <input type="hidden" id="latitude" name="latitude">
+    <input type="hidden" id="longitude" name="longitude">
     <br>
     <button type="reset">Limpiar campos</button>
     <button type="submit" id="enviar-formulario" disabled>Enviar información</button>
