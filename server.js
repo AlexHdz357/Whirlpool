@@ -1,48 +1,63 @@
-const express = require('express');
-const mysql = require('mysql');
-const path = require("path");
+const path = require('path');
+const bodyParser = require('body-parser');
+const { Connection, Request, TYPES } = require('tedious');
+const db = require('./conexion.js');
 
+
+
+const config = {
+    server: 'LAPTOP-6VJG77D3',
+    authentication: {
+        type: 'default',
+        options: {
+            userName: "tofu123",
+            password: "tempura123@"
+        }
+    },
+    options: {
+        port: 1433,
+        database: 'whirlpool',
+        trustServerCertificate: true
+    }
+}
+
+const connection=new Connection(config);
+
+const express = require('express');
 const app = express();
 
-app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname,'public')));
 
-// Configuración de la conexión a la base de datos
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'sa',
-  password: 'Pekkavegano357%',
-  database: 'ReportesWhirl'
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public', 'PaginaInicio.html'));
 });
 
-// Conectar a la base de datos
-connection.connect((err) => {
-  if (err) {
-    console.error('Error al conectar a la base de datos:', err);
-    return;
-  }
-  console.log('Conexión establecida correctamente.');
+app.get('/formulario', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public', 'formulario.html'));
 });
 
-// Endpoint para obtener datos de la base de datos
+app.use(bodyParser.urlencoded({extended: false}));
 
-app.get('/', async (req, res) => {
-  res.render('formulario');
-})
+app.post('/datos', function(req, res) {
+    const sql = 'INSERT INTO Reporte (nombreProducto, prioridad, Descripcion, latitude, longitude) VALUES (@nombreProducto, @prioridad, @Descripcion, @latitude, @longitude)';
+    const request = new Request(sql, function(error, rowCount) {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Hubo un error al insertar los datos en la base de datos');
+        } else {
+            res.send('Datos insertados correctamente');
+        }
+    });
 
-app.get('/datos', (req, res) => {
-  connection.query('SELECT * FROM Reporte', (error, results, fields) => {
-    if (error) {
-      console.error('Error al ejecutar la consulta:', error);
-      res.status(500).send('Error al obtener los datos');
-      return;
-    }
-    res.json(results);
-  });
+    request.addParameter('nombreProducto', TYPES.VarChar, req.body.nombreProducto);
+    request.addParameter('prioridad', TYPES.Int, req.body.prioridad);
+    request.addParameter('Descripcion', TYPES.VarChar, req.body.Descripcion);
+    request.addParameter('latitude', TYPES.VarChar, req.body.latitude);
+    request.addParameter('longitude', TYPES.VarChar, req.body.longitude);
+
+    db.execSql(request);
 });
 
-// Iniciar el servidor
-const PORT = 3306;
-app.listen(PORT, () => {
-  console.log(`Servidor backend escuchando en el puerto ${PORT}`);
+app.listen(3000, () => {
+    console.log('Server started on port 3000');
 });

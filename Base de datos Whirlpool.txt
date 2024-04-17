@@ -1,0 +1,47 @@
+create database whirlpool; 
+
+CREATE TABLE Rol(
+idRol int primary key,
+Descripcion varchar(35)
+);
+
+create table Empleado(
+idEmpleado int primary key,
+idRol int, 
+Nombre varchar(50), 
+ApellidoP varchar(50),
+Correo varchar (40),
+foreign key (idRol) references Rol(idRol)
+);
+
+create table Categoria(
+idCategoria int primary key, 
+Descripcion varchar(35)
+); 
+
+create table Sucursal(
+idSucursal int primary key, 
+Latitud int, 
+Longitud int
+); 
+
+create table Reporte(
+idReporte INT IDENTITY(1,1) primary key, 
+idTecnico int, 
+idSupervisor int, 
+idSucursal int, 
+idCategoria int, 
+FechaResolución date, 
+FechaAsignación date, 
+foreign key (idTecnico) references Empleado(idEmpleado),
+foreign key (idSupervisor) references Empleado(idEmpleado),
+foreign key (idSucursal) references Sucursal(idSucursal),
+foreign key (idCategoria) references categoria(idCategoria)
+);
+
+create table Archivo(
+idArchivo int primary key, 
+idReporte int, 
+ruta varchar(255), 
+foreign key (idReporte) references Reporte(idReporte) 
+);

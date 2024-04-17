@@ -1,0 +1,17 @@
+create database whirlpool; 
+
+use whirlpool;
+
+CREATE TABLE Reporte(
+    idReporte int identity(1,1) primary key,
+    nombreProducto varchar(35),
+    prioridad int,
+    Descripcion varchar(200),
+    latitude varchar(35),
+    longitude varchar(35)
+)
+
+create table Rol(
+    idRol int primary key,
+    descripcion varchar(35)
+)
