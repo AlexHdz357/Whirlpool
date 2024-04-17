@@ -26,7 +26,7 @@ Longitud int
 ); 
 
 create table Reporte(
-idReporte INT (1,1)IDENTITY primary key, 
+idReporte INT IDENTITY(1,1) primary key, 
 idTecnico int, 
 idSupervisor int, 
 idSucursal int, 
