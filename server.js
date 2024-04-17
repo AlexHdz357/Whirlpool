@@ -1,81 +1,63 @@
-const express = require('express');
-const mysql = require('mysql');
-const bodyParser = require('body-parser');
 const path = require('path');
+const bodyParser = require('body-parser');
+const { Connection, Request, TYPES } = require('tedious');
+const db = require('./conexion.js');
 
+
+
+const config = {
+    server: 'LAPTOP-6VJG77D3',
+    authentication: {
+        type: 'default',
+        options: {
+            userName: "tofu123",
+            password: "tempura123@"
+        }
+    },
+    options: {
+        port: 1433,
+        database: 'whirlpool',
+        trustServerCertificate: true
+    }
+}
+
+const connection=new Connection(config);
+
+const express = require('express');
 const app = express();
 
-// Configuración de la conexión a la base de datos
-const pool = mysql.createPool({
-  connectionLimit: 10, // Set your desired connection limit
-  host: 'localhost',
-  user: 'sa',
-  password: 'Pekkavegano357%',
-  database: 'ReportesWhirl',
-  port: 3306
+app.use(express.static(path.join(__dirname,'public')));
+
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public', 'PaginaInicio.html'));
 });
 
-// Iniciar el servidor
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor backend escuchando en el puerto ${PORT}`);
+app.get('/formulario', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public', 'formulario.html'));
 });
 
-// Configurar el directorio de visitas
-app.set('views', path.join(__dirname, 'views'));
+app.use(bodyParser.urlencoded({extended: false}));
 
-// Configurar el motor de plantillas EJS
-app.set('view engine', 'ejs');
-
-// Servir archivos estáticos desde el directorio 'public' si tienes archivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Endpoint para la página de inicio
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/PaginaInicio.html'));
-});
-
-// Middleware para analizar el cuerpo de la solicitud
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-
-// Endpoint para obtener datos de la base de datos
-app.get('/datos', (req, res) => {
-  pool.getConnection((err, connection) => {
-    if (err) {
-      console.error('Error al obtener conexión de la pool:', err);
-      res.status(500).send('Error al obtener los datos');
-      return;
-    }
-    connection.query('SELECT * FROM Reporte', (error, results, fields) => {
-      connection.release(); // Release the connection back to the pool
-      if (error) {
-        console.error('Error al ejecutar la consulta:', error);
-        res.status(500).send('Error al obtener los datos');
-        return;
-      }
-      console.log('Resultado de la consulta:', results);
-      res.json(results);
+app.post('/datos', function(req, res) {
+    const sql = 'INSERT INTO Reporte (nombreProducto, prioridad, Descripcion, latitude, longitude) VALUES (@nombreProducto, @prioridad, @Descripcion, @latitude, @longitude)';
+    const request = new Request(sql, function(error, rowCount) {
+        if (error) {
+            console.error(error);
+            res.status(500).send('Hubo un error al insertar los datos en la base de datos');
+        } else {
+            res.send('Datos insertados correctamente');
+        }
     });
-  });
+
+    request.addParameter('nombreProducto', TYPES.VarChar, req.body.nombreProducto);
+    request.addParameter('prioridad', TYPES.Int, req.body.prioridad);
+    request.addParameter('Descripcion', TYPES.VarChar, req.body.Descripcion);
+    request.addParameter('latitude', TYPES.VarChar, req.body.latitude);
+    request.addParameter('longitude', TYPES.VarChar, req.body.longitude);
+
+    db.execSql(request);
 });
 
-app.post('/datos', (req, res) => {
-  // Extraer los datos del cuerpo de la solicitud
-  const nombreProducto = req.body.nombreProducto;
-  const prioridad = parseInt(req.body.prioridad); // Convertir a entero
-  const descripcion = req.body.descripcion;
-  const latitude = req.body.latitude; // Obtener el valor de latitude
-  const longitude = req.body.longitude; // Obtener el valor de longitude
-
-  // Hacer algo con los datos, como enviarlos a una base de datos o responder con ellos
-  console.log("Nombre:", nombreProducto);
-  console.log("Entero:", prioridad);
-  console.log("Texto:", descripcion);
-  console.log("Latitude:", latitude);
-  console.log("Longitude:", longitude);
-
-  // Responder con un mensaje de éxito
-  res.send('Datos recibidos correctamente.');
+app.listen(3000, () => {
+    console.log('Server started on port 3000');
 });
