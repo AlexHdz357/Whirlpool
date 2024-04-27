@@ -102,6 +102,10 @@ h2{
     font-family:Arial, Helvetica, sans-serif ;
 } 
 
+.btn-Tec{
+    background-color: #00a0dd;
+}
+
 .nav-link {
     display: block;
     padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x);
